@@ -1,0 +1,8 @@
+**Features**
+Quick keypress handling (currently possible to reverse direction by quick keycombo)
+Start animation
+
+**Dev backlog**
+Keymaps or something
+Cleaner array handling (implement as list?)
+Clean the method jungle
