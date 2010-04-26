@@ -176,6 +176,7 @@ function updateScore() {
 function checkPlayStatus() {
   if (!nowPlaying) {
     $("#endMsg").slideDown(fadeSpeed);
+    $("#endMsg").slideDown(fadeSpeed);
     clearInterval(updateRoutineId);
   }
 }
