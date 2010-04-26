@@ -1,0 +1,7 @@
+**Features**
+Keypress processing from queue (quick keycombos might cause player headache)
+Start animation
+
+**Dev backlog**
+Keymaps or something
+Cleaner array handling (implement as list?)
