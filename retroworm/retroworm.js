@@ -1,6 +1,6 @@
-gameArea = 35;
-oneBiteIncreaseAmount = 5;
-gameSpeed = 50;
+gameArea = 30;
+oneBiteIncreaseAmount = 3;
+gameSpeed = 70;
 wormbody = "worm";
 food = "wormFood";
 collision = "collision";
