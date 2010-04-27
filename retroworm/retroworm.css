@@ -5,7 +5,7 @@ body {font-family: monospace;}
 .wormhole {background-color: #333}
 .collision {background-color: #F40}
 #title {font-size: 40px;}
-#header {position: relative; width: 705px; margin-bottom: 5px;}
+#header {position: relative; width: 610px; margin-bottom: 5px;}
 #scoreMsg {font-size: 20px;}
 #backLink {position: absolute; right: 10px;}
 #score {font-weight: bold;}
