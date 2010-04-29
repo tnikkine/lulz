@@ -1,6 +1,6 @@
 gameArea = 30;
-oneBiteIncreaseAmount = 3;
-gameSpeed = 70;
+oneBiteLengthIncreaseAmount = 3;
+gameUpdateFrequency = 70;
 wormbody = "worm";
 food = "wormFood";
 collision = "collision";
@@ -9,7 +9,7 @@ fadeSpeed = 400;
 wormholeAppearRate = 80;
 wormholeSpawnDistance = 8;
 var wormholeRateCounter;
-var nowPlaying;
+var currentlyPlaying;
 var worm;
 var updateRoutineId = 0;
 var keyEventProcessed;
@@ -75,7 +75,7 @@ function buildGameArea() {
 }
 
 function startNewGame() {
-  nowPlaying = true;
+  currentlyPlaying = true;
   $("#focus").focus();  // ahem.. how to set focus without a dummy field?
   $("#startButton").attr("disabled","disabled");
   $("#endMsg").slideUp(fadeSpeed);
@@ -83,7 +83,7 @@ function startNewGame() {
   worm.spawn();
   createWormFood();
   wormholeRateCounter = 0;
-  updateRoutineId = setInterval(updateGame, gameSpeed);
+  updateRoutineId = setInterval(updateGame, gameUpdateFrequency);
 }
 
 function Worm() {
@@ -98,7 +98,7 @@ function Worm() {
     this.grow();
   };
   this.grow = function() {
-    for (i=0; i<oneBiteIncreaseAmount; i++) {
+    for (i=0; i<oneBiteLengthIncreaseAmount; i++) {
       this.size++;
       this.location[this.size] = new Coord(-1,-1);
     }
@@ -148,8 +148,8 @@ function checkForCollisions() {
 }
 
 function borderCollision() {
-  return ((worm.head.x < 1 || worm.head.x > gameArea -2) ||
-       ((worm.head.y < 1) || worm.head.y > gameArea -2));
+  return (worm.head.x < 1 || worm.head.x > gameArea -2 ||
+        worm.head.y < 1 || worm.head.y > gameArea -2);
 }
 
 function wormCollision() {
@@ -165,16 +165,15 @@ function createWormholes() {
   if (wormholeRateCounter < wormholeAppearRate)
     return;
   createBoardElement(wormhole, wormholeSpawnDistance);
-
   wormholeRateCounter = 0;
 }
 
 function updateScore() {
-  $("#score").html(worm.size - oneBiteIncreaseAmount);  // no score for the startup worm length  
+  $("#score").html(worm.size - oneBiteLengthIncreaseAmount);  // no score for the startup worm length
 }
 
 function checkPlayStatus() {
-  if (!nowPlaying) {
+  if (!currentlyPlaying) {
     $("#endMsg").slideDown(fadeSpeed);
     $("#endMsg").slideDown(fadeSpeed);
     clearInterval(updateRoutineId);
@@ -184,10 +183,9 @@ function checkPlayStatus() {
 function createBoardElement(elementType, minimumDistanceFromHead) {
   // No elements over the worm or other existing elements
   var elementPosition = new Coord(getRandomCoordinate(), getRandomCoordinate());
-  while ($(elementPosition.asBoardCoords()).attr("class") != "" ||
-      (distanceFromHead(elementPosition) < minimumDistanceFromHead)) {
+  do {
     elementPosition.setRandomCoordinates();
-  }
+  } while (elementPosition.hasAnyClass() || (distanceFromHead(elementPosition) < minimumDistanceFromHead))
   $(elementPosition.asBoardCoords()).addClass(elementType);
   return elementPosition;
 }
@@ -208,12 +206,15 @@ function Coord(newX, newY) {
   this.asBoardCoords = function() {
     return ("#" + this.x + "_" + this.y);
   }
+  this.hasAnyClass = function () {
+    return $(this.asBoardCoords()).attr("class") != "";
+  }
 }
 
 function endGame() {
   $(worm.head.asBoardCoords()).addClass("collision").fadeTo(fadeSpeed, 0.3).fadeTo(fadeSpeed, 1);
   $("#startButton").removeAttr("disabled");
-  nowPlaying = false;
+  currentlyPlaying = false;
 }
 
 function getRandomCoordinate() {
