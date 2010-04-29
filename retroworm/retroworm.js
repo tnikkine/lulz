@@ -162,10 +162,10 @@ function wormholeCollision() {
 
 function createWormholes() {
   wormholeRateCounter++;
-  if (wormholeRateCounter < wormholeAppearRate)
-    return;
-  createBoardElement(wormhole, wormholeSpawnDistance);
-  wormholeRateCounter = 0;
+  if (wormholeRateCounter > wormholeAppearRate) {
+    createBoardElement(wormhole, wormholeSpawnDistance);
+    wormholeRateCounter = 0;
+  }
 }
 
 function updateScore() {
@@ -175,14 +175,13 @@ function updateScore() {
 function checkPlayStatus() {
   if (!currentlyPlaying) {
     $("#endMsg").slideDown(fadeSpeed);
-    $("#endMsg").slideDown(fadeSpeed);
     clearInterval(updateRoutineId);
   }
 }
 
 function createBoardElement(elementType, minimumDistanceFromHead) {
   // No elements over the worm or other existing elements
-  var elementPosition = new Coord(getRandomCoordinate(), getRandomCoordinate());
+  var elementPosition = new Coord(0,0);
   do {
     elementPosition.setRandomCoordinates();
   } while (elementPosition.hasAnyClass() || (distanceFromHead(elementPosition) < minimumDistanceFromHead))
