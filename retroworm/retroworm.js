@@ -1,13 +1,13 @@
-gameArea = 30;
-oneBiteLengthIncreaseAmount = 3;
-gameUpdateFrequency = 70;
-wormbody = "worm";
-food = "wormFood";
-collision = "collision";
-wormhole = "wormhole";
-fadeSpeed = 400;
-wormholeAppearRate = 80;
-wormholeSpawnDistance = 8;
+var gameArea = 40;
+var oneBiteLengthIncreaseAmount = 3;
+var gameUpdateFrequency = 70;
+var wormbody = "worm";
+var food = "wormFood";
+var collision = "collision";
+var wormhole = "wormhole";
+var fadeSpeed = 400;
+var wormholeAppearRate = 70;
+var wormholeSpawnDistance = 8;
 var wormholeRateCounter;
 var currentlyPlaying;
 var worm;
@@ -15,7 +15,6 @@ var updateRoutineId = 0;
 var keyEventProcessed;
 
 $(document).ready(function() {
-  worm = new Worm();
   initializeButtons();
   bindKeys();
   buildGameArea();
@@ -76,11 +75,11 @@ function buildGameArea() {
 
 function startNewGame() {
   currentlyPlaying = true;
-  $("#focus").focus();  // ahem.. how to set focus without a dummy field?
+  $("#focus").focus();
   $("#startButton").attr("disabled","disabled");
   $("#endMsg").slideUp(fadeSpeed);
   $("td").removeClass(wormbody).removeClass(food).removeClass(wormhole).removeClass(collision);
-  worm.spawn();
+  worm = new Worm();
   createWormFood();
   wormholeRateCounter = 0;
   updateRoutineId = setInterval(updateGame, gameUpdateFrequency);
@@ -94,28 +93,25 @@ function Worm() {
     var boardCenter = Math.floor(gameArea / 2);
     this.location[0] = new Coord(boardCenter, boardCenter);
     this.head = this.location[0];
-    this.size = 0;
     this.grow();
   };
   this.grow = function() {
-    for (i=0; i<oneBiteLengthIncreaseAmount; i++) {
-      this.size++;
-      this.location[this.size] = new Coord(-1,-1);
+    var i = oneBiteLengthIncreaseAmount;
+    while (i--) {
+      this.location.push(new Coord(-1,-1));
     }
-    this.tail = this.location[this.size];
   };
   this.updatePosition = function() {
-    for (i=this.size; i>0; i--) {
-      this.location[i].x = this.location[i-1].x;
-      this.location[i].y = this.location[i-1].y;
-    }
-    worm.head.x += worm.xDirection;
-    worm.head.y += worm.yDirection;
+    this.location.pop();
+    this.location.splice(0, 0, new Coord(worm.head.x + worm.xDirection, worm.head.y + worm.yDirection));
+    worm.head = this.location[0];
+    this.tail = this.location[this.location.length - 1];
   }
   this.draw = function() {
     $(worm.head.asBoardCoords()).addClass(wormbody);
     $(worm.tail.asBoardCoords()).removeClass(wormbody);
   }
+  this.spawn();
 }
 
 function updateGame() {
@@ -169,7 +165,7 @@ function createWormholes() {
 }
 
 function updateScore() {
-  $("#score").html(worm.size - oneBiteLengthIncreaseAmount);  // no score for the startup worm length
+  $("#score").html(worm.location.length - 1 - oneBiteLengthIncreaseAmount);  // no score for the startup worm length
 }
 
 function checkPlayStatus() {
